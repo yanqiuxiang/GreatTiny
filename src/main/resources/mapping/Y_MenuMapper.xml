@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yqx.dao.Y_MenuMapper">
+
+    <select id="getMenuByUserId" parameterType="Integer" resultType="com.yqx.entity.Y_Menu">
+       SELECT 
+		      ID,ICON,NAME,STATE,URL,P_ID 
+		FROM 
+		      T_MENU
+		WHERE
+		      ID IN (
+		    	SELECT  menu_id FROM T_ROLE_MENU WHERE ROLE_ID IN (SELECT ROLE_ID FROM T_USER_ROLE WHERE USER_ID = #{userId})   
+		 )          
+    </select>
+    <!-- 查询角色下所管辖的模块 -->
+    <select id="getMenuByRole" parameterType="Integer" resultType="com.yqx.entity.Y_Menu">
+    	  SELECT 
+			tm.*
+		  FROM 
+			T_MENU tm
+		  INNER JOIN
+			T_ROLE_MENU trm
+		  ON tm.id=trm.menu_id
+		  WHERE
+		    trm.role_id=#{roleId}
+    </select>
+    
+    <select  id="selectByParentIdAndRoleId" resultType="com.yqx.entity.Y_Menu">
+    	SELECT 
+    	      tm.* 
+        FROM 
+              T_menu tm
+	    INNER 
+	          JOIN T_role_menu trm
+	    ON  
+	          trm.menu_id=tm.id
+	    WHERE  
+	        trm.role_id = #{roleId}
+	    AND 
+	        tm.p_id = #{parentId}
+	    ORDER BY tm.id ASC
+    </select>
+    
+<!--  
+    <select id="findById" parameterType="String" resultMap="userMap">
+      SELECT user.id, user.name, user.password,
+			role.id as roleId, role.name as roleName,
+			permission.id as permissionId, 
+            permission.name as permissionName, 
+            permission.url as permissionUrl
+        FROM user, user_role, role, role_permission, permission
+          WHERE user.id = #{id}
+            AND user.id = user_role.user_id
+            AND user_role.role_id = role.id
+            AND role.id = role_permission.role_id
+            AND role_permission.permission_id = permission.id
+    </select>
+-->
+</mapper>

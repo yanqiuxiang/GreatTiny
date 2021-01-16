@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yqx.dao.Y_RoleMapper">
+
+    <select id="getRoleByUserId" parameterType="Integer" resultType="com.yqx.entity.Y_Role">
+    	SELECT
+		     ID,BZ,NAME,REMARKS
+		FROM
+		     T_ROLE   
+		WHERE
+		     ID IN(SELECT ROLE_ID FROM T_USER_ROLE WHERE USER_ID = #{id})
+    </select>
+    
+    <select id="getRoleById" parameterType="Integer" resultType="com.yqx.entity.Y_Role">
+    	SELECT
+		     ID,BZ,NAME,REMARKS
+		FROM
+		     T_ROLE   
+		WHERE
+		     ID = #{roleId}
+    </select>
+    
+    <select id="getNoneRoleById" parameterType="Integer" resultType="com.yqx.entity.Y_Role">
+    	SELECT
+		     ID,BZ,NAME,REMARKS
+		FROM
+		     T_ROLE   
+		WHERE
+		     ID IN(SELECT ROLE_ID FROM T_USER_ROLE WHERE USER_ID != #{id})
+    </select>
+<!--  
+    <select id="findById" parameterType="String" resultMap="userMap">
+      SELECT user.id, user.name, user.password,
+			role.id as roleId, role.name as roleName,
+			permission.id as permissionId, 
+            permission.name as permissionName, 
+            permission.url as permissionUrl
+        FROM user, user_role, role, role_permission, permission
+          WHERE user.id = #{id}
+            AND user.id = user_role.user_id
+            AND user_role.role_id = role.id
+            AND role.id = role_permission.role_id
+            AND role_permission.permission_id = permission.id
+    </select>
+-->
+</mapper>
